@@ -114,3 +114,37 @@ SELECT E.EMPLOYEE_ID ,E.FIRST_NAME ,E.JOB_ID ,E.SALARY * E.COMMISSION_PCT AS COM
 FROM EMPLOYEES e 
 WHERE E.COMMISSION_PCT IS NOT NULL ;
 
+-- 부서 80의 사원에 적용 가능한 세율 표시하기
+--LAST_NAME, SALARY, TAX_RATE 출력
+--TAX_RATE 는 SALARY / 2000 으로 나눈 후 버림
+--			해당 값이 0 이면 0.0/ 1, 0.09/2,0.20/3,0.3/4,0.4/5,0.42/6,0.44/ 그 외 0.45
+
+SELECT
+	E.LAST_NAME ,
+	E.SALARY ,
+	DECODE(TRUNC (SALARY / 2000),
+	 0,	0.0,
+	 1,	0.09,
+	 2,	0.20,
+	 3,	0.30,
+	 4,	0.40,
+	 5,	0.42,
+	 6,	0.44,
+	 0.45) AS TAX_RATE
+FROM
+	EMPLOYEES e;
+
+-- 회사내의 최대 연봉 및 최소 연봉의 차이를 출력
+SELECT MAX(E.SALARY) ,MIN(E.SALARY), MAX(E.SALARY) - MIN(E.SALARY) AS SAL_GAP
+FROM EMPLOYEES e ;
+-- 매너저로 근무하는 사원들의 총 숫자를 출력
+SELECT COUNT(DISTINCT E.MANAGER_ID) AS 매니저수
+FROM EMPLOYEES e;
+
+-- 매니저가 없는 사원들은 제외하고 매니저가 관리하는 사원들 중에서 최소 급여를 받는 사원 조회
+-- (매니저가 관리하는 사원 중에서 연봉이6000 미만 제외)
+SELECT MANAGER_ID, MIN(SALARY) 
+FROM EMPLOYEES e
+GROUP BY MANAGER_ID 
+HAVING MANAGER_ID IS NOT NULL AND MIN(SALARY) >= 6000
+ORDER BY MANAGER_ID ;
