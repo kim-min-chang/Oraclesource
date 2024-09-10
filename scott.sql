@@ -1165,3 +1165,181 @@ UPDATE DEPT_TCL SET LOC = 'SEOUL' WHERE DEPTNO = 30;
 COMMIT;
 
 
+
+
+-- DDL(데이터 정의어)
+--데이터베이스 데이터를 보관하고 관리하기 위해 제공되는 여러 객체의 생성/변경/삭제 관련 기능
+--CREATE(생성) /ALTER(생성된 객체 변경) /DROP(생성된객체 삭제) 
+
+--1. 테이블 정의어
+--CREATE TABLE 테이블이름 (
+--	열이름1 자료형, 
+--	열이름2 자료형,
+--	열이름3 자료형,
+--	열이름4 자료형,
+--)
+
+-- 테이블 이름 작성 규칙
+-- 1) 문자로 시작(한글 가능하나 사용자히 않음 - 숫자로 시작못함)
+-- 2) 테이블 이름은 길이의 제한이 있음
+-- 3) 같은 소유자 소유의 테이블 이름은 중복이 불가능함
+-- 4) SQL 키워드는 사용 불가 (SELECT, INSERT 등)
+
+-- 열 이름 생성 규칙
+-- 1) 문자로 시작
+-- 2) 길이의 제한이 있음(30byte)
+-- 3) 한테이블에 열 이름 중복 불가
+-- 4) 열 이름은 영문자, 숫자, 특수문자(_,#, $) 사용가능
+-- 5) SQL 키워드 사용불가 (SELECT, INSERT)
+
+-- 자료형
+-- 문자 : varcher2(길이), nvarchar2(길이), char(길이),nchar(길이)
+--		var : 가변(저장된 값의 길이 만큼만 사용)
+--		name varchar2(10) : 홍길동(9byte)
+--		name char(10) : 홍길동(10byte) - 고정길이
+--		db 버전에 따라 한글 문자하나당 2byte 할당 OR 3byte 할당
+--		name varchar2(10) : 홍길동전=> 들어갈 값의 크기가 크다고 오류남
+--			nvarchar2(10),nchar() : 문자 하나당 바이트 하나 할당
+-- 숫자 : number(전체자릿수,소수점자릿수)
+-- 날짜 : date
+-- BLOB : 대용량 이진 데이터 저장
+-- CLOB : 대용량 텍스트 데이터
+
+CREATE TABLE EMP_DDL(
+	EMPNO NUMBER(4,0),
+	ENAME VARCHAR2(10), -- 영어 10 자까지 가능 / 한글 3자 까지 가능
+	JOB VARCHAR2(9),
+	MGR NUMBER(4,0),
+	HIREDATE DATE,
+	SAL NUMBER(7,2),
+	COMML NUMBER(7,2),
+	DEPTNO NUMBER(2,0)
+);
+-- DEPT 테이블의 열구조와 데이터 복사 해서 새테이블 작성
+CREATE TABLE EXAM_DDL AS SELECT * FROM DEPT;
+
+-- DEPT 테이블의 열구조 만 복사 해서 새테이블 작성
+CREATE TABLE EXAM_DDL2 AS SELECT * FROM DEPT WHERE 1<>1;
+
+
+-- ALTAR : 변경
+-- 새로운 열 추가 / 열이름 변경 / 열삭제 / 열 자료형 변경
+-- EMP__DDL 에 새로운 열 (HP: 010-1234-5637)추가
+ALTER TABLE EMP_DDL ADD HP VARCHAR2(20);
+SELECT * FROM EMP_DDL ;
+
+-- HP => TEL
+ALTER TABLE EMP_DDL RENAME COLUMN HP TO TEL;
+
+-- EMPNO NUMBER(5) 로 변경
+ALTER TABLE EMP_DDL MODIFY EMPNO NUMBER(5);
+
+-- TEL 삭제
+ALTER TABLE EMP_DDL DROP COLUMN TEL;
+
+-- 테이블 이름 변경
+RENAME EMP_DDL TO EMP_RENAME;
+
+-- DROP : 삭제
+DROP TABLE EMP_RENAME;
+
+CREATE TABLE MEMBER(
+	ID CHAR(8),
+	NAME VARCHAR2(10), -- NVARCHAR2(10)
+	ADDR VARCHAR2(50), -- NVARCHAR2(50)
+	NATION CHAR(4), -- NCHAR(4)
+	EMAIL VARCHAR2(50), -- NVARCHAR2(50)
+	AGE NUMBER(7,2)
+);
+
+-- MEMBER테이블에 BIGO 열 추가하기
+--[조건] 가변형 무자열 , 길이는 20
+ALTER TABLE member ADD BIGO VARCHAR2(20);
+-- BIGO 열 크기를 30으로 변경하기
+ALTER TABLE MEMBER MODIFY BIGO VARCHAR2(30);
+ALTER TABLE MEMBER MODIFY NATION NCHAR(4);
+
+-- BIGO 열 이름을 REMARK로 변경하기 
+ALTER TABLE MEMBER RENAME COLUMN BIGO TO REMARK;
+
+-- 데이터 삽입하기
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1234','홍길동', '서울시 구로구 개봉동', '대한민국', 'hong123@naver.com',25);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1235','이승기', '서울시 강서구 화곡동', '대한민국', 'lee89@naver.com',26);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1236','강호동', '서울시 마포구 상수동', '대한민국', 'kang56@naver.com',42);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1237','이수근', '경기도 부천시', '대한민국', 'leesu@naver.com',42);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1238','서장훈', '서울시 강남구 대치동', '대한민국', 'seo568@google.com',36);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1239','김영철', '서울시 도봉구 도봉동', '대한민국', 'young@naver.com',41);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1210','김장훈', '서울시 노원구 노원1동', '대한민국', 'kim@naver.com',48);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1211','임창정', '서울시 양천구 신월동', '대한민국', 'limchang@naver.com',45);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1212','김종국', '서울시 강남구 도곡동', '대한민국', 'kimjong@naver.com',44);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1213','김범수', '경기도 일산동구 일산동', '대한민국', 'kim77@naver.com',36);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1214','김경호', '인천 서구 가좌동', '대한민국', 'ho789@naver.com',26);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1215','민경훈', '경기도 수원시 수원1동', '대한민국', 'min@naver.com',35);
+INSERT INTO MEMBER(ID,NAME,ADDR,NATION,EMAIL,AGE)
+VALUES ('hong1216','바이브', '경기도 용인시 기흥구', '대한민국', 'vibe@naver.com',33);
+
+
+-- 오라클 객체 
+-- 인덱스 / 뷰 / 스퀸스 / 동의어
+
+-- 인덱스 : 빠른검색
+-- 1) 자동생성 : 기본키를 설정 시 인덱스로 자동 설정 됨
+-- 2) 직접 인덱스 생성 :
+--CREATE INDEX 인덱스명 ON 테이블명(열이름1 ASC OR DESC, 열이름2)
+-- EMP 테이블의 SAL 컬럼을 INDEX로 지정 
+CREATE INDEX idx_emp_sal ON EMP(SAL);
+
+DROP INDEX IDX_EMP_SAL;
+
+-- 뷰 : 가상 테이블 
+-- 1. 편리성 : 복잡한 select 문의 복잡도를 완화하기 위해 자주 활용하는 select 문을 뷰로 저장해 놓은 후 다른 sql 구문에서 활용
+-- 2. 보안성 : 노출되면 안되는 칼럼을 제외하여 접근 허용
+-- 뷰 생성 할 수 있는 권한 부여 받기
+-- CREATE [OR REPLACE] VIEW 뷰이름(열이름1, 열이름2....) AS (SELECT 구문)
+
+-- EMP 테이블의 20번 부서에 해당하는 사원들의 뷰생성  -  권한이 불충분합니다
+CREATE VIEW VW_EMP_20 AS (SELECT EMPNO, ENAME,JOB,DEPTNO FROM EMP WHERE DEPTNO = 20);  
+DROP VIEW VW_EMP_20 ;
+
+CREATE VIEW VW_EMP_20 AS (SELECT * FROM EMP WHERE DEPTNO = 20);
+
+-- 뷰에 데이터 삽입 시 원본 테이블에 삽입이 일어남
+INSERT INTO VW_EMP_20 ve VALUES(6666,'홍길동','MANAGER',7899,'2012-08-01',1200,0,20);
+SELECT * FROM VW_EMP_20 ve ;
+
+SELECT * FROM EMP e ;
+
+-- 뷰를 통해 SELECT만 가능하도록 제한
+CREATE VIEW VW_EMP_30 AS (SELECT EMPNO, ENAME,JOB,DEPTNO FROM EMP WHERE DEPTNO = 30) WITH READ ONLY;
+
+-- ROWNUM : 특수 컬럼(조회된 순서대로 일련번호 부여)
+-- ORDER BY 기준이 PK(기본키)가 아니라면 번호 부여가 이상하게 나옴
+SELECT ROWNUM, E.*
+FROM EMP e 
+ORDER BY SAL DESC;
+
+-- 정렬이 기준이 PK가 아니라면 인라인 뷰에서 정렬 후 ROWNUM 번호를 부여 해야 함
+SELECT ROWNUM, E.*
+FROM (SELECT * FROM EMP ORDER BY SAL DESC) E;
+
+
+
+
+
+
+
+
+
+
